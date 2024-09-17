@@ -10,6 +10,7 @@ import Login from './pages/Login';
 import PlaceOrder from './pages/PlaceOrder';
 import Order from './pages/Order';
 import Navbar from './components/Navbar';
+import Footer from './components/Footer';
 
 const App = () => {
   return (
@@ -26,6 +27,7 @@ const App = () => {
         <Route path="/Place-order" element={<PlaceOrder />} />
         <Route path="/Order" element={<Order />} /> {/* Fixed casing here */}
       </Routes>
+      <Footer/>
     </div>
   );
 };
