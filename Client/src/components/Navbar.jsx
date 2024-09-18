@@ -62,25 +62,17 @@ const Navbar = () => {
       </div>
 
       {/* Sidebar for Mobile Screens */}
-      <div className={`fixed top-0 right-0 h-full bg-white z-50 transition-transform transform ${visible ? 'translate-x-0' : 'translate-x-full'} w-[75%] sm:hidden`}>
-        <div className="flex justify-between p-5">
-          <img src={assets.logo} className='w-36' alt="logo" />
-          <img onClick={toggleMenu} src={assets.close_icon} className='w-5 cursor-pointer' alt="close" />
+      <div className={ `fixed top-0 right-0 bottom-0 transition-transform bg-white z-50 ${visible ? 'translate-x-0' : 'translate-x-full'} w-full sm:w-[250px]`}>
+        <div className='flex flex-col text-gray-600'>
+          <div onClick={()=>setVisible(false)} className='flex items-center gap-4 p-3'>
+            <img className='h-4 rotate-180' src={assets.dropdown_icon} alt=""/>
+            <p>Back</p>
+          </div>
+          <NavLink onClick={() => setVisible(false)} className='py-2 pl-5 border' to='/'>HOME</NavLink>
+          <NavLink onClick={() => setVisible(false)} className='py-2 pl-5 border' to='/collection'>COLLECTION</NavLink>
+          <NavLink onClick={() => setVisible(false)} className='py-2 pl-5 border' to='/about'>ABOUT</NavLink>
+          <NavLink onClick={() => setVisible(false)} className='py-2 pl-5 border' to='/contact'>CONTACT</NavLink>
         </div>
-        <ul className='flex flex-col items-center gap-5 mt-10 text-sm text-gray-700'>
-          <NavLink to='/' className='text-center' onClick={toggleMenu}>
-            <p>HOME</p>
-          </NavLink>
-          <NavLink to='/collection' className='text-center' onClick={toggleMenu}>
-            <p>COLLECTION</p>
-          </NavLink>
-          <NavLink to='/about' className='text-center' onClick={toggleMenu}>
-            <p>ABOUT</p>
-          </NavLink>
-          <NavLink to='/contact' className='text-center' onClick={toggleMenu}>
-            <p>CONTACT</p>
-          </NavLink>
-        </ul>
       </div>
     </div>
   );
