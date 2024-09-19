@@ -1,8 +1,8 @@
 import { createContext } from "react";
-import { products } from "../assets/assets"; // Ensure products are correctly exported from this path
+import { products } from "../assets/assets.js"; // Ensure products are correctly exported from this path
 
 // Create a new context
-export const shopContext = createContext();
+export const ShopContext = createContext();
 
 const ShopContextProvider = (props) => {
     const currency = '₹'; 
@@ -16,9 +16,9 @@ const ShopContextProvider = (props) => {
     };
 
     return (
-        <shopContext.Provider value={value}>
+        <ShopContext.Provider value={value}>
            {props.children}
-        </shopContext.Provider>
+        </ShopContext.Provider>
     );
 };
 
