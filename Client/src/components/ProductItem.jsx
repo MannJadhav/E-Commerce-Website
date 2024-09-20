@@ -11,7 +11,6 @@ const ProductItem = ({ id, image, name, price }) => {
       {/* <div>Hello</div> */}
       <Link className="text-gray-700 cursor-pointer" to={`/product/${id}`}>
         <div className="overflow-hidden">
-          <div className="text-bold">Hello</div>
           <img
             src={image} // Ensure this is a valid image URL
             alt={name} // Descriptive alt text for accessibility
