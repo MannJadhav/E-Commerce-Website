@@ -5,7 +5,7 @@ import Title from "../components/Title.jsx";
 import ProductItem from "../components/ProductItem.jsx";
 
 const Collection = () => {
-  const { products } = useContext(ShopContext);
+  const { products, search, showSearch } = useContext(ShopContext);
   const [showFilter, setShowFilter] = useState(false);
   const [filterProducts, setFilterProducts] = useState([]);
   const [category, setCategory] = useState([]);
@@ -33,32 +33,39 @@ const Collection = () => {
   useEffect(() => {
     let filtered = products.slice();
 
+    // Search filter
+    if (showSearch && search) {
+      filtered = filtered.filter((item) =>
+        item.name.toLowerCase().includes(search.toLowerCase())
+      );
+    }
+
+    // Category filter
     if (category.length > 0) {
       filtered = filtered.filter((item) => category.includes(item.category));
     }
 
+    // Subcategory filter
     if (subCategory.length > 0) {
       filtered = filtered.filter((item) =>
         subCategory.includes(item.subCategory)
       );
     }
 
-    // Sorting logic applied after filtering
+    // Sorting logic
     switch (sortType) {
       case "low-high":
         filtered.sort((a, b) => a.price - b.price);
         break;
-
       case "high-low":
         filtered.sort((a, b) => b.price - a.price);
         break;
-
       default:
         break;
     }
 
     setFilterProducts(filtered);
-  }, [category, subCategory, products, sortType]);
+  }, [category, subCategory, products, sortType, search, showSearch]);
 
   return (
     <div className="flex flex-col sm:flex-row gap-1 sm:gap-10 pt-10 border-t">
