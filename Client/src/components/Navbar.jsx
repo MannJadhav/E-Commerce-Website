@@ -13,7 +13,8 @@ const Navbar = () => {
     <div className='relative flex items-center justify-between py-5 font-medium'>
 
       {/* Logo */}
-      <img src={assets.logo} className='w-36' alt="logo" />
+      <Link to='/'> <img src={assets.logo} className='w-36' alt="logo" /></Link>
+     
 
       {/* Desktop Menu */}
       <ul className='hidden sm:flex gap-5 text-sm text-gray-700'>
