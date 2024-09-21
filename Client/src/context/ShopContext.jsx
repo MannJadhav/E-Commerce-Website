@@ -97,18 +97,21 @@ const ShopContextProvider = (props) => {
     });
   };
 
-  const getCartAmount = async () => {
+  const getCartAmount = () => {
     let totalAmount = 0;
-    for (const items in cartItems) {
-      let itemInfo = products.find((product) => product.id === items);
-      for (const item in cartItems[items]) {
-        try {
-          if (cartItems[items][item] > 0) {
-            totalAmount += itemInfo.price * cartItems[items][item];
-          }
-        } catch (error) {}
+
+    for (const itemId of Object.keys(cartItems)) {
+      const itemInfo = products.find((product) => product.id === itemId);
+
+      if (itemInfo) {
+        const quantity = cartItems[itemId];
+
+        if (quantity > 0) {
+          totalAmount += itemInfo.price * quantity;
+        }
       }
     }
+
     return totalAmount;
   };
 
