@@ -12,6 +12,7 @@ const ShopContextProvider = (props) => {
   const [showSearch, setShowSearch] = useState(false);
   const [cartItems, setCartItems] = useState({});
 
+  // Add item to cart
   const addToCart = (itemId, size) => {
     if (!size) {
       toast.error("Select Product Size");
@@ -35,6 +36,7 @@ const ShopContextProvider = (props) => {
     });
   };
 
+  // Update quantity of a specific item in cart
   const updateCart = (id, size, quantity) => {
     setCartItems((prevItems) => {
       const newItems = { ...prevItems };
@@ -52,6 +54,21 @@ const ShopContextProvider = (props) => {
     });
   };
 
+  // Remove an item from the cart
+  const removeItem = (itemId, size) => {
+    setCartItems((prevItems) => {
+      const newItems = { ...prevItems };
+      if (newItems[itemId]) {
+        delete newItems[itemId][size];
+        if (Object.keys(newItems[itemId]).length === 0) {
+          delete newItems[itemId];
+        }
+      }
+      return newItems;
+    });
+  };
+
+  // Get the total number of items in the cart
   const getCartCount = () => {
     return Object.values(cartItems).reduce((totalCount, sizes) => {
       return (
@@ -60,6 +77,7 @@ const ShopContextProvider = (props) => {
     }, 0);
   };
 
+  // Update the quantity of a specific item directly (alternative method)
   const updateQuantity = (itemId, size, quantity) => {
     setCartItems((prevItems) => {
       const newItems = { ...prevItems };
@@ -79,6 +97,11 @@ const ShopContextProvider = (props) => {
     });
   };
 
+  const handleRemoveItem = (item) => {
+    removeItem(item._id, item.size); // Calls the removeItem function from context
+  };
+
+  // Monitor cart changes for debugging
   useEffect(() => {
     console.log(cartItems);
   }, [cartItems]);
@@ -95,6 +118,7 @@ const ShopContextProvider = (props) => {
     cartItems,
     addToCart,
     updateCart,
+    removeItem, // Adding removeItem to the context
     getCartCount,
     updateQuantity,
   };
