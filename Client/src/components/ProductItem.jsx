@@ -8,13 +8,12 @@ const ProductItem = ({ id, image, name, price }) => {
 
   return (
     <>
-      {/* <div>Hello</div> */}
       <Link className="text-gray-700 cursor-pointer" to={`/product/${id}`}>
         <div className="overflow-hidden">
           <img
             src={image} // Ensure this is a valid image URL
             alt={name} // Descriptive alt text for accessibility
-            className="hover:scale-110 transition ease-in-out duration-200" // Added duration for smooth scaling
+            className="hover:scale-110 transition ease-in-out duration-200 p-4" // Added padding
             onError={(e) => {
               e.target.src = "fallback-image-url.jpg"; // Fallback image URL
             }}
