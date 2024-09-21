@@ -97,6 +97,21 @@ const ShopContextProvider = (props) => {
     });
   };
 
+  const getCartAmount = async () => {
+    let totalAmount = 0;
+    for (const items in cartItems) {
+      let itemInfo = products.find((product) => product.id === items);
+      for (const item in cartItems[items]) {
+        try {
+          if (cartItems[items][item] > 0) {
+            totalAmount += itemInfo.price * cartItems[items][item];
+          }
+        } catch (error) {}
+      }
+    }
+    return totalAmount;
+  };
+
   const handleRemoveItem = (item) => {
     removeItem(item._id, item.size); // Calls the removeItem function from context
   };
@@ -121,6 +136,7 @@ const ShopContextProvider = (props) => {
     removeItem, // Adding removeItem to the context
     getCartCount,
     updateQuantity,
+    getCartAmount,
   };
 
   return (
