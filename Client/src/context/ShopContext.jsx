@@ -1,6 +1,7 @@
 import { createContext, useEffect, useState } from "react";
 import { products } from "../assets/assets.js";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 // Create a new context
 export const ShopContext = createContext();
@@ -11,6 +12,7 @@ const ShopContextProvider = (props) => {
   const [search, setSearch] = useState("");
   const [showSearch, setShowSearch] = useState(false);
   const [cartItems, setCartItems] = useState({});
+  const navigate = useNavigate();
 
   // Add item to cart
   const addToCart = (itemId, size) => {
@@ -34,6 +36,9 @@ const ShopContextProvider = (props) => {
 
       return newItems;
     });
+
+    // Navigate to cart page after adding an item
+    navigate("/cart");
   };
 
   // Update quantity of a specific item in cart
@@ -64,6 +69,12 @@ const ShopContextProvider = (props) => {
           delete newItems[itemId];
         }
       }
+
+      // Navigate to home page if cart is empty after removing the item
+      if (Object.keys(newItems).length === 0) {
+        navigate("/");
+      }
+
       return newItems;
     });
   };
@@ -77,43 +88,21 @@ const ShopContextProvider = (props) => {
     }, 0);
   };
 
-  // Update the quantity of a specific item directly (alternative method)
-  const updateQuantity = (itemId, size, quantity) => {
-    setCartItems((prevItems) => {
-      const newItems = { ...prevItems };
-
-      if (newItems[itemId]) {
-        if (quantity === 0) {
-          delete newItems[itemId][size];
-          if (Object.keys(newItems[itemId]).length === 0) {
-            delete newItems[itemId];
-          }
-        } else {
-          newItems[itemId][size] = quantity;
-        }
-      }
-
-      return newItems;
-    });
-  };
-
+  // Get total amount in the cart
   const getCartAmount = () => {
     let totalAmount = 0;
 
     for (const itemId of Object.keys(cartItems)) {
       const itemInfo = products.find((product) => product._id === itemId);
       if (itemInfo) {
-        const quantity = Object.values(cartItems[itemId])[0];
-        if (quantity > 0) {
+        const sizes = cartItems[itemId];
+        for (const size in sizes) {
+          const quantity = sizes[size];
           totalAmount += itemInfo.price * quantity;
         }
       }
     }
     return totalAmount;
-  };
-
-  const handleRemoveItem = (item) => {
-    removeItem(item._id, item.size); // Calls the removeItem function from context
   };
 
   // Monitor cart changes for debugging
@@ -133,10 +122,10 @@ const ShopContextProvider = (props) => {
     cartItems,
     addToCart,
     updateCart,
-    removeItem, // Adding removeItem to the context
+    removeItem,
     getCartCount,
-    updateQuantity,
     getCartAmount,
+    navigate, // Making navigate available in context if needed by other components
   };
 
   return (
