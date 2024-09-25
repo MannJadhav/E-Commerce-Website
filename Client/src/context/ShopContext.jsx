@@ -36,9 +36,8 @@ const ShopContextProvider = (props) => {
 
       return newItems;
     });
-
+    toast.success("Product added to cart");
     // Navigate to cart page after adding an item
-    navigate("/cart");
   };
 
   // Update quantity of a specific item in cart
