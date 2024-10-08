@@ -25,14 +25,15 @@ const addProduct = async (req, res) => {
         // Only keep valid images
         const images = [image1, image2, image3, image4].filter((item) => item !== undefined);
 
-        // Upload images to Cloudinary
+        console.log(images);
+
         let imagesUrl = await Promise.all(
-            images.map(async (item) => {
+            images[0].map(async (item) => {
                 let result = await cloudinary.uploader.upload(item.path, { resource_type: 'image' });
                 return result.secure_url;
             })
         );
-
+        console.log(sizes)
         // Prepare the product data to be saved
         const productData = {
             name,
@@ -41,20 +42,15 @@ const addProduct = async (req, res) => {
             price: Number(price),
             subCategory,
             bestseller: bestseller === "true" ? true : false,
-            sizes: JSON.parse(sizes),  // Parse the sizes string into JSON
+            sizes: sizes,  // Parse the sizes string into JSON
             image: imagesUrl,  // Array of image URLs
             date: Date.now()
         };
-
-        console.log(productData);
-
         // Create a new product using the product model
         const product = new productModel(productData);
         await product.save();  // Save the product to the database
-
         // Send success response
         res.json({ success: true, message: "Product Added" });
-
     } catch (error) {
         console.log(error);
         // Send error response
@@ -65,7 +61,6 @@ const addProduct = async (req, res) => {
 // function for listing products
 const listProducts = async (req, res) => {
     try {
-
         const products = await productModel.find({});
         res.json({ success: true, products })
 

@@ -7,8 +7,10 @@ import List from "./pages/List";
 import Orders from "./pages/Orders";
 import Login from "./components/Login";
 
+export const backendUrl = import.meta.env.VITE_BACKEND_URL;
+
 const App = () => {
-  const [token, setToken] = useState("");
+  const [token, setToken] = useState(localStorage.getItem("token") || "");
 
   // Function to handle login, you can pass this to the Login component
   const handleLogin = (token) => {
