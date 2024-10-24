@@ -24,6 +24,7 @@ const Product = () => {
   if (!productData) {
     return <div className="text-center">Loading or Product not found...</div>;
   }
+  console.log(productData);
 
   return (
     <div className="border-t-2 pt-10 transition-opacity ease-in duration-500 opacity-100">
@@ -75,7 +76,7 @@ const Product = () => {
           <div className="flex flex-col gap-4 my-8">
             <p>Select Size</p>
             <div className="flex gap-2">
-              {productData.sizes.map((item, index) => (
+              {JSON.parse(productData.sizes).map((item, index) => (
                 <button
                   onClick={() => setSize(item)}
                   className={`border py-2 px-4 bg-gray-100 ${

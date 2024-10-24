@@ -29,10 +29,18 @@ const List = () => {
 
   const removeProduct = async (id) => {
     try {
-      const response = await axios.post(`/api/product/delete`, {
-        id,
+      const response = await fetch(`/api/product/remove`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify({ id }),
       });
-      if (response.data.success) {
+      const data = await response.json();
+      console.log(data);
+
+      if (data.success) {
         fetchList();
       } else {
         console.log(response.data.message);

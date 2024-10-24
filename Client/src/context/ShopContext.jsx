@@ -1,7 +1,7 @@
 import { createContext, useEffect, useState } from "react";
-import { products } from "../assets/assets.js";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 // Create a new context
 export const ShopContext = createContext();
@@ -12,32 +12,50 @@ const ShopContextProvider = (props) => {
   const [search, setSearch] = useState("");
   const [showSearch, setShowSearch] = useState(false);
   const [cartItems, setCartItems] = useState({});
+  const [products, setProducts] = useState([]);
+  const [token, setToken] = useState(localStorage.getItem("token") || "");
   const navigate = useNavigate();
 
-  // Add item to cart
-  const addToCart = (itemId, size) => {
+  // Add item to cart (async function)
+  const addToCart = async (itemId, size) => {
     if (!size) {
       toast.error("Select Product Size");
       return;
     }
 
-    setCartItems((prevItems) => {
-      const newItems = { ...prevItems };
+    let cartData = JSON.parse(JSON.stringify(cartItems)); // Fallback for structuredClone
 
-      if (newItems[itemId]) {
-        if (newItems[itemId][size]) {
-          newItems[itemId][size] += 1;
-        } else {
-          newItems[itemId][size] = 1;
-        }
+    if (cartData[itemId]) {
+      if (cartData[itemId][size]) {
+        cartData[itemId][size] += 1;
       } else {
-        newItems[itemId] = { [size]: 1 };
+        cartData[itemId][size] = 1;
       }
+    } else {
+      cartData[itemId] = {};
+      cartData[itemId][size] = 1;
+    }
 
-      return newItems;
-    });
-    toast.success("Product added to cart");
-    // Navigate to cart page after adding an item
+    // Update the cart in local state
+    setCartItems(cartData);
+
+    if (token) {
+      try {
+        // Send updated cart data to the server
+        await axios.post(
+          `/api/cart/add`,
+          { itemId, size },
+          { headers: { token } }
+        );
+        toast.success("Product added to cart");
+      } catch (error) {
+        console.log(error);
+        toast.error(error.message || "Failed to add item to cart");
+      }
+    }
+
+    // Navigate to cart page after adding an item (if desired)
+    navigate("/cart");
   };
 
   // Update quantity of a specific item in cart
@@ -104,10 +122,53 @@ const ShopContextProvider = (props) => {
     return totalAmount;
   };
 
-  // Monitor cart changes for debugging
+  // Fetch products data
+  const getProductsData = async () => {
+    try {
+      const response = await axios.get(`/api/product/list`);
+      if (response.data.success) {
+        setProducts(response.data.products);
+      } else {
+        toast.error(response.data.message);
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error(error.message);
+    }
+  };
+
+  // Get user's cart
+  const getUserCart = async (token) => {
+    try {
+      const response = await axios.post(
+        `/api/cart/get`,
+        {},
+        { headers: { token } }
+      );
+      if (response.data.success) {
+        setCartItems(response.data.cartItems);
+      } else {
+        toast.error(response.data.message);
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error(error.message || "Failed to fetch cart");
+    }
+  };
+
   useEffect(() => {
-    console.log(cartItems);
-  }, [cartItems]);
+    getProductsData();
+  }, []);
+
+  useEffect(() => {
+    if (token) {
+      getUserCart(token);
+    } else if (localStorage.getItem("token")) {
+      const storedToken = localStorage.getItem("token");
+      setToken(storedToken);
+      getUserCart(storedToken); // Fetch cart after setting token
+    }
+  }, [token]);
 
   // Context value containing products, currency, and delivery fee
   const value = {
@@ -120,11 +181,14 @@ const ShopContextProvider = (props) => {
     setShowSearch,
     cartItems,
     addToCart,
+    setCartItems,
     updateCart,
     removeItem,
     getCartCount,
     getCartAmount,
-    navigate, // Making navigate available in context if needed by other components
+    navigate,
+    setToken,
+    token,
   };
 
   return (
